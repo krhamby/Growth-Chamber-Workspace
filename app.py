@@ -9,7 +9,7 @@ from flask import render_template, url_for, redirect, jsonify
 from flask import request, session
 
 # imports for the database
-import os
+import os, datetime
 from flask_sqlalchemy import SQLAlchemy
 
 # Determine the absolute path of our database file
@@ -31,7 +31,7 @@ db = SQLAlchemy(app)
 # Define model for Data table
 class Data(db.Model):
     __tablename__ = "Data"
-    id = db.Column(db.Unicode, primary_key = True)
+    id = db.Column(db.Integer, primary_key = True)
     timestamp = db.Column(db.DateTime, nullable = False)
     lux = db.Column(db.Unicode, nullable = False)
     temperature = db.Column(db.Float, nullable = False)
@@ -54,12 +54,23 @@ db.drop_all()
 # Only needed if the tables are not created
 db.create_all()
 
+# Dummy data for testing
+multiple_instances = [
+    Data(timestamp = datetime.datetime.now(), lux = 95650, temperature = 70, humidity = 85)
+]
+
+# Insert instances into database
+db.session.add_all(multiple_instances)
+
+# Commit changes
+db.session.commit()
+
 # Route for database API containing all tuples
 @app.get("/api/v1/data/")
 def get_all_data():
     data_set = Data.query.all() # TODO: may need to sort the data after this line
     return jsonify({
-        "data": data.to_json() for data in data_set
+        'data': data.to_json() for data in data_set
     })
 
 @app.route("/", methods = ["GET", "POST"])
