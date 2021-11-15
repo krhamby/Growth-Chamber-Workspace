@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title> Grove City College Growth Chamber </title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"
+    integrity="sha512-GMGzUEevhWh8Tc/njS0bDpwgxdCJLQBWG3Z2Ct+JGOpVnEmjvNx6ts4v6A2XJf1HOrtOsfhv3hBKpK9kE5z8AQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+  <link rel="shortcut icon" href="/static/favicon/favicon.png" type="image/png" />
+  <link rel="stylesheet" href="/static/styles/styles.css">
+</head>
+
+<body>
+  <header>
+    <div id="outer_header">
+      <div id="inner_header">
+        <h1> Grove City College Growth Chamber </h1>
+      </div>
+    </div>
+    <div class="container">
+      {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning d-flex align-items-center alert-dismissible fade show">
+          <button type="button" class="close" data-bs-dismiss="alert"> 
+            &times;
+          </button>
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  </header>
+  <main>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-6 ms-auto">
+          <h2 class="data">
+            Lux
+          </h2>
+          <div class="measurement">
+            <p>
+              Recent: {{data[-1].lux}}
+            </p>
+          </div>
+          <div>
+            <canvas id="luxChart"></canvas>
+            <script>
+              const labels = [
+                  '10:00',
+                  '11:00',
+                  '12:00',
+                  '13:00',
+                  '14:00',
+                  '15:00',
+                ];
+                
+              const data = {
+                labels: labels,
+                datasets: [{
+                  label: 'Lux',
+                  backgroundColor: 'rgb(255, 99, 132)',
+                  borderColor: 'rgb(255, 99, 132)',
+                  data: [1000, 1050, 1060, 1100, 900],
+                }]
+              };
+              const config = {
+                type: 'line',
+                data: data,
+                options: {}
+              };
+              const luxChart = new Chart(
+                document.getElementById('luxChart'),
+                config
+                );
+            </script>
+          </div>
+          <p>
+            <button class="btn btn-default btn-sm" type="button" data-bs-toggle="collapse"
+              data-bs-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample1">
+              Change Lux
+            </button>
+          </p>
+          <div class="collapse" id="collapseExample1">
+            <div class="card card-body">
+              {{form.hidden_tag()}}
+
+              {{form.stime.label}}
+              {{form.stime()}}
+              <br>
+              {{form.etime.label}}
+              {{form.etime()}}
+              <br>
+              {{form.time_data.label}}
+              {{form.time_data()}}
+              <br>
+              {{form.other_data.label}}
+              {{form.other_data()}}
+              <br>
+              {{form.submit()}}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 ms-auto">
+          <h2 class="data">
+            Temperature
+          </h2>
+          <div class="measurement">
+            <p>
+              Recent: {{data[-1].temperature}}
+            </p>
+          </div>
+          <p>
+            <button class="btn btn-default btn-sm" type="button" data-bs-toggle="collapse"
+              data-bs-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">
+              Change Temperature
+            </button>
+          </p>
+          <div class="collapse" id="collapseExample2">
+            <div class="card card-body">
+              {{form.hidden_tag()}}
+
+              {{form.stime.label}}
+              {{form.stime()}}
+              <br>
+              {{form.etime.label}}
+              {{form.etime()}}
+              <br>
+              {{form.time_data.label}}
+              {{form.time_data()}}
+              <br>
+              {{form.other_data.label}}
+              {{form.other_data()}}
+              <br>
+              {{form.submit()}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6 ms-auto">
+          <h2 class="data">
+            Humidity
+          </h2>
+          <div class="measurement">
+            <p>
+              Recent: {{data[-1].humidity}}
+            </p>
+          </div>
+          <p>
+            <button class="btn btn-default btn-sm" type="button" data-bs-toggle="collapse"
+              data-bs-target="#collapseExample3" aria-expanded="false" aria-controls="collapseExample3">
+              Change Humidity
+            </button>
+          </p>
+          <div class="collapse" id="collapseExample3">
+            <div class="card card-body">
+              {{form.hidden_tag()}}
+
+              {{form.stime.label}}
+              {{form.stime()}}
+              <br>
+              {{form.etime.label}}
+              {{form.etime()}}
+              <br>
+              {{form.time_data.label}}
+              {{form.time_data()}}
+              <br>
+              {{form.other_data.label}}
+              {{form.other_data()}}
+              <br>
+              {{form.submit()}}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 ms-auto">
+          <h2 class="data">
+            Other
+          </h2>
+          <p>
+            <button class="btn btn-default btn-sm" type="button" data-bs-toggle="collapse"
+              data-bs-target="#collapseExample4" aria-expanded="false" aria-controls="collapseExample4">
+              Change Other
+            </button>
+          </p>
+          <div class="collapse" id="collapseExample4">
+            <div class="card card-body">
+              {{form.hidden_tag()}}
+
+              {{form.stime.label}}
+              {{form.stime()}}
+              <br>
+              {{form.etime.label}}
+              {{form.etime()}}
+              <br>
+              {{form.time_data.label}}
+              {{form.time_data()}}
+              <br>
+              {{form.other_data.label}}
+              {{form.other_data()}}
+              <br>
+              {{form.submit()}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+
+</html>
+
+<!-- 
+<!doctype html>
+<html>
+ <body>
+  <h1>Hello Plotly (but not Dash)</h1>
+  <div id="chart" class="chart"></div>
+</body>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script type="text/javascript">
+  var graphs = {{graphJSON | safe}};
+  Plotly.plot("chart",graphs,{});
+</script>
+</html>  -->

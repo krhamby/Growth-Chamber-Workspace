@@ -1,0 +1,40 @@
+main {
+    font-size: large;
+    margin: 1%;
+}
+
+#outer_header {
+    background-color: rgb(220, 20, 60);
+    padding: 10px;
+}
+
+#inner_header {
+    background-color: rgb(206, 206, 206);
+    border: solid black thick;
+    text-align: center;
+    margin-left: 20%;
+    margin-right: 20%;
+}
+
+.col-lg-6 {
+    border-radius: 10px;
+    border: solid black thin;
+    text-align: center;
+}
+
+.btn-default {
+    background-color: rgb(206, 206, 206);
+    border: solid black thin;
+}
+
+.btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open .dropdown-toggle.btn-default {
+    background-color: rgb(206, 206, 206);
+    border: solid black thin;
+}
+
+.measurement {
+    font-size: 30px;
+}
+/* .data {    
+} */
+

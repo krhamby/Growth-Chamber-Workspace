@@ -1,0 +1,26 @@
+{
+    "20211018T14:37:00": {
+        "timestamp": "20211018T14:37:00",
+        "lux": 1500,
+        "humidity": 95,
+        "temperature": 75
+    },
+    "20210909T01:30:00": {
+        "timestamp": "20210909T01:30:00",
+        "lux": 1000,
+        "humidity": 80,
+        "temperature": 70
+    },
+    "20210912T01:30:00": {
+        "timestamp": "20210912T01:30:00",
+        "lux": 1050,
+        "humidity": 81,
+        "temperature": 72
+    },
+    "20211025T01:30:00": {
+        "timestamp": "20211025T01:30:00",
+        "lux": 1110,
+        "humidity": 65,
+        "temperature": 50
+    }
+}
