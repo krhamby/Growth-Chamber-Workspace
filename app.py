@@ -2,15 +2,20 @@
 from flask.helpers import flash
 from myforms import NameForm, EmailForm, DataChangeForm
 
+# TODO: Can remove this once SQL implemtation is complete
 from datapack import data_db
 
+# Flask imports
 from flask import Flask
 from flask import render_template, url_for, redirect, jsonify
 from flask import request, session
 
 # imports for the database
-import os, datetime
+import os, random
 from flask_sqlalchemy import SQLAlchemy
+
+# Used to create dummy data
+from datetime import datetime, timedelta
 
 # Determine the absolute path of our database file
 scriptdir = os.path.abspath(os.path.dirname(__file__))
@@ -39,43 +44,45 @@ class Data(db.Model):
     def __str__(self):
         return f"Data(time={self.timestamp}, lux={self.lux}, temperature={self.temperature}, humidity={self.humidity})"
     def __repr__(self):
-        return f"Data({self.code})"
+        return f"Data({self.id})"
     def to_json(self):
-        return jsonify({
-            "timestamp": self.timestamp,
+        return {
+            "timestamp": self.timestamp.isoformat(),
             "lux": self.lux,
             "temperature": self.temperature,
             "humidity": self.humidity
-        })
+        }
 
 # ONLY USE THIS IN DEVELOPMENT
-db.drop_all()
+# db.drop_all()
 
 # Only needed if the tables are not created
 db.create_all()
 
-# Dummy data for testing
-multiple_instances = [
-    Data(timestamp = datetime.datetime.now(), lux = 95650, temperature = 70, humidity = 85)
-]
+# for i in range(100):
+#     # Dummy data for testing
+#     multiple_instances = [
+#         Data(timestamp = datetime.now(), lux = random.randint(80000, 85000), temperature = random.randint(65, 75), humidity = random.randint(80, 85)),
+#     ]
 
-# Insert instances into database
-db.session.add_all(multiple_instances)
+#     # Insert instances into database
+#     db.session.add_all(multiple_instances)
 
-# Commit changes
-db.session.commit()
+#     # Commit changes
+#     db.session.commit()
+# #     # time.sleep(15)
 
 # Route for database API containing all tuples
 @app.get("/api/v1/data/")
 def get_all_data():
     data_set = Data.query.all() # TODO: may need to sort the data after this line
     return jsonify({
-        'data': data.to_json() for data in data_set
+        'data': [data.to_json() for data in data_set]
     })
 
 @app.route("/", methods = ["GET", "POST"])
 def index():
-    data = list(data_db.values())
+    data = Data.query.order_by(Data.timestamp.asc()).all()
     form = DataChangeForm()
     if request.method == "GET":
         return render_template("webpage.html", data = data, form = form)

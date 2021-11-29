@@ -1,70 +1,187 @@
-window.addEventListener("DOMContentLoaded", function() {
-    loadData();
+window.addEventListener("DOMContentLoaded", function () {
+  loadLuxData();
+  loadTempData();
+  loadHumidityData();
 });
 
-function loadData() {
-    const dataIndexURL = "localhost:5000/api/v1/data/";
-    fetch(dataIndexURL)
-        .then(validateJSON)
-        .then(createGraphs)
-        .catch(error => {
-            console.log("Data Fetch Failed: ", error)
+function loadLuxData() {
+  const dataIndexURL = "/api/v1/data/";
+  fetch(dataIndexURL)
+    .then(validateJSON)
+    .then(data => {
+      const allData = [];
+      for (const dataset of data.data) {
+        const date = new Date(dataset.timestamp);
+        const lux = Number(dataset.lux);
+        const json = {x: date, y: lux};
+        allData.push(json);
+      }
+      return allData;
+    })
+    .then(createLuxGraph)
+    .catch(error => {
+      console.log("Data Fetch Failed: ", error)
     })
 }
 
-function createGraphs(data) {
-    // Date object
-    const d = new Date();
+function createLuxGraph(allData) {
+  // Used for debugging
+  console.log(allData);
 
-    // Options for DateTimeFormat
-    const options = {
-      month: "numeric", day: "numeric",
-      hour:"numeric", minute: "numeric", second: "numeric"
-    };
-
-    /* While this works for now, I may want a helper method or 
-    different implementation */
-    const labels = [
-        new Intl.DateTimeFormat("en-US", options).format(d - 10800000 * 8),
-        new Intl.DateTimeFormat("en-US", options).format(d - 10800000 * 7),
-        new Intl.DateTimeFormat("en-US", options).format(d - 10800000 * 6),
-        new Intl.DateTimeFormat("en-US", options).format(d - 10800000 * 5),
-        new Intl.DateTimeFormat("en-US", options).format(d - 10800000 * 4),
-        new Intl.DateTimeFormat("en-US", options).format(d - 10800000 * 3),
-        new Intl.DateTimeFormat("en-US", options).format(d - 10800000 * 2),
-        new Intl.DateTimeFormat("en-US", options).format(d - 10800000),
-        new Intl.DateTimeFormat("en-US", options).format(d),
-      ];
-      
-    const data = {
-      labels: labels,
+  const config = {
+    type: 'line',
+    data: {
+      labels: [],
       datasets: [{
-        label: 'Lux',
+        data: allData,
+        label: "Lux",
         backgroundColor: 'rgb(255, 99, 132)',
-        borderColor: 'rgb(255, 99, 132)',
-        data: [1000, 1050, 1060, 1100, 900],
-      }]
-    };
-    const config = {
-      type: 'line',
-      data: data,
-      options: {
-          scales: {
-              x: {
-                  type: "timeseries"
-              }
+        borderColor: 'rgb(255, 99, 132)'
+      }],
+    },
+    options: {
+      scales: {
+        x: {
+          type: "time",
+          time: {
+            displayFormats: {
+              quarter: "MMM",
+              month: "MMM",
+              day: "MMM do",
+              hour: "MMM do h:mm aaaaa",
+              minute: "m",
+              second: "s"
+            }
           }
+        },
       }
-    };
-    const luxChart = new Chart(
-      document.getElementById('luxChart'),
-      config
-      );
+    }
+  }
+  // console.log(label);
+  // const canvasId = String(label.toLowerCase()) + "Chart";
+  const luxChart = new Chart(
+    document.getElementById("luxChart"),
+    config
+  );
 }
 
-// function convertTime(date) {
-//     return "${date.}"
-// }
+function loadTempData() {
+  const dataIndexURL = "/api/v1/data/";
+  fetch(dataIndexURL)
+    .then(validateJSON)
+    .then(data => {
+      const allData = [];
+      for (const dataset of data.data) {
+        const date = new Date(dataset.timestamp);
+        const temp = Number(dataset.temperature);
+        const json = {x: date, y: temp};
+        allData.push(json);
+      }
+      return allData;
+    })
+    .then(createTemperatureGraph)
+    .catch(error => {
+      console.log("Data Fetch Failed: ", error)
+    })
+}
+
+function createTemperatureGraph(allData) {
+  // Used for debugging
+  console.log(allData);
+
+  const config = {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        data: allData,
+        label: "Temperature (F)",
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 99, 132)'
+      }],
+    },
+    options: {
+      scales: {
+        x: {
+          type: "time",
+          time: {
+            displayFormats: {
+              quarter: "MMM",
+              month: "MMM",
+              day: "MMM do",
+              hour: "MMM do h:mm aaaaa",
+              minute: "m",
+              second: "s"
+            }
+          }
+        },
+      }
+    }
+  }
+  const temperatureChart = new Chart(
+    document.getElementById("temperatureChart"),
+    config
+  );
+}
+
+function loadHumidityData() {
+  const dataIndexURL = "/api/v1/data/";
+  fetch(dataIndexURL)
+    .then(validateJSON)
+    .then(data => {
+      const allData = [];
+      for (const dataset of data.data) {
+        const date = new Date(dataset.timestamp);
+        const humidity = Number(dataset.humidity);
+        const json = {x: date, y: humidity};
+        allData.push(json);
+      }
+      return allData;
+    })
+    .then(createHumidityGraph)
+    .catch(error => {
+      console.log("Data Fetch Failed: ", error)
+    })
+}
+
+function createHumidityGraph(allData) {
+  // Used for debugging
+  console.log(allData);
+
+  const config = {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        data: allData,
+        label: "Humidity (%)",
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 99, 132)'
+      }],
+    },
+    options: {
+      scales: {
+        x: {
+          type: "time",
+          time: {
+            displayFormats: {
+              quarter: "MMM",
+              month: "MMM",
+              day: "MMM do",
+              hour: "MMM do h:mm aaaaa",
+              minute: "m",
+              second: "s"
+            }
+          }
+        },
+      }
+    }
+  }
+  const humidityChart = new Chart(
+    document.getElementById("humidityChart"),
+    config
+  );
+}
 
 /**
  * Validate a response to ensure the HTTP status code indcates success.
@@ -73,9 +190,9 @@ function createGraphs(data) {
  * @returns {object} object encoded by JSON in the response
  */
 function validateJSON(response) {
-    if (response.ok) {
-        return response.json();
-    } else {
-        return Promise.reject(response);
-    }
+  if (response.ok) {
+    return response.json();
+  } else {
+    return Promise.reject(response);
+  }
 }

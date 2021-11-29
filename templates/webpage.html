@@ -13,18 +13,28 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
     crossorigin="anonymous"></script>
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"
-    integrity="sha512-GMGzUEevhWh8Tc/njS0bDpwgxdCJLQBWG3Z2Ct+JGOpVnEmjvNx6ts4v6A2XJf1HOrtOsfhv3hBKpK9kE5z8AQ=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+ 
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- Chart.js data adapter -->
+  <!-- Chart.js date adapter -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
+  <!-- Moment.js  -->
+  <script src="https://momentjs.com/downloads/moment.js"></script>
 
+  <!-- Date-FNS -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/2.0.0-alpha0/date_fns.min.js"></script> -->
+
+  <!-- Favicon -->
   <link rel="shortcut icon" href="/static/favicon/favicon.png" type="image/png"/>
+
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="/static/styles/styles.css">
+
+  <!-- Custom Graph JS -->
+  <script src="/static/scripts/graphs.js"></script>
 </head>
 
 <body>
@@ -53,49 +63,12 @@
             Lux
           </h2>
           <div class="measurement">
-            <!-- <p>
+            <p>
               Recent: {{data[-1].lux}}
-            </p> -->
+            </p>
           </div>
           <div id="lux">
             <canvas id="luxChart"></canvas>
-            <script>
-              const d = new Date();
-              const options = {
-                month: "numeric", day: "numeric",
-                hour:"numeric", minute: "numeric", second: "numeric"
-              };
-              const labels = [
-                  new Intl.DateTimeFormat("en-US", options).format(d - 10800000 * 8),
-                  new Intl.DateTimeFormat("en-US", options).format(d - 10800000 * 7),
-                  new Intl.DateTimeFormat("en-US", options).format(d - 10800000 * 6),
-                  new Intl.DateTimeFormat("en-US", options).format(d - 10800000 * 5),
-                  new Intl.DateTimeFormat("en-US", options).format(d - 10800000 * 4),
-                  new Intl.DateTimeFormat("en-US", options).format(d - 10800000 * 3),
-                  new Intl.DateTimeFormat("en-US", options).format(d - 10800000 * 2),
-                  new Intl.DateTimeFormat("en-US", options).format(d - 10800000),
-                  new Intl.DateTimeFormat("en-US", options).format(d),
-                ];
-                
-              const data = {
-                labels: labels,
-                datasets: [{
-                  label: 'Lux',
-                  backgroundColor: 'rgb(255, 99, 132)',
-                  borderColor: 'rgb(255, 99, 132)',
-                  data: [{1000, Date() 1050, 1060, 1100, 900],
-                }]
-              };
-              const config = {
-                type: 'line',
-                data: data,
-                options: {}
-              };
-              const luxChart = new Chart(
-                document.getElementById('luxChart'),
-                config
-                );
-            </script>
           </div>
           <p>
             <button class="btn btn-default btn-sm" type="button" data-bs-toggle="collapse"
@@ -131,6 +104,9 @@
             <p>
               Recent: {{data[-1].temperature}}
             </p>
+          </div>
+          <div id="temperature">
+            <canvas id="temperatureChart"></canvas>
           </div>
           <p>
             <button class="btn btn-default btn-sm" type="button" data-bs-toggle="collapse"
@@ -168,6 +144,9 @@
             <p>
               Recent: {{data[-1].humidity}}
             </p>
+            <div id="humidity">
+              <canvas id="humidityChart"></canvas>
+            </div>
           </div>
           <p>
             <button class="btn btn-default btn-sm" type="button" data-bs-toggle="collapse"
@@ -231,17 +210,3 @@
 </body>
 
 </html>
-
-<!-- 
-<!doctype html>
-<html>
- <body>
-  <h1>Hello Plotly (but not Dash)</h1>
-  <div id="chart" class="chart"></div>
-</body>
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<script type="text/javascript">
-  var graphs = {{graphJSON | safe}};
-  Plotly.plot("chart",graphs,{});
-</script>
-</html>  -->
