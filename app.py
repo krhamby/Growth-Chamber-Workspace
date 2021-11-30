@@ -11,7 +11,8 @@ from flask import render_template, url_for, redirect, jsonify
 from flask import request, session
 
 # imports for the database
-import os, random
+import os
+import random
 from flask_sqlalchemy import SQLAlchemy
 
 # Used to create dummy data
@@ -36,15 +37,18 @@ db = SQLAlchemy(app)
 # Define model for Data table
 class Data(db.Model):
     __tablename__ = "Data"
-    id = db.Column(db.Integer, primary_key = True)
-    timestamp = db.Column(db.DateTime, nullable = False)
-    lux = db.Column(db.Unicode, nullable = False)
-    temperature = db.Column(db.Float, nullable = False)
-    humidity = db.Column(db.Unicode, nullable = False)
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, nullable=False)
+    lux = db.Column(db.Unicode, nullable=False)
+    temperature = db.Column(db.Float, nullable=False)
+    humidity = db.Column(db.Unicode, nullable=False)
+
     def __str__(self):
         return f"Data(time={self.timestamp}, lux={self.lux}, temperature={self.temperature}, humidity={self.humidity})"
+
     def __repr__(self):
         return f"Data({self.id})"
+
     def to_json(self):
         return {
             "timestamp": self.timestamp.isoformat(),
@@ -72,24 +76,24 @@ db.create_all()
 #     db.session.commit()
 # #     # time.sleep(15)
 
+
+
 # Route for database API containing all tuples
 @app.get("/api/v1/data/")
 def get_all_data():
-    data_set = Data.query.all() # TODO: may need to sort the data after this line
+    data_set = Data.query.all()  # TODO: may need to sort the data after this line
     return jsonify({
         'data': [data.to_json() for data in data_set]
     })
 
-@app.route("/", methods = ["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
 def index():
     data = Data.query.order_by(Data.timestamp.asc()).all()
     form = DataChangeForm()
     if request.method == "GET":
-        return render_template("webpage.html", data = data, form = form)
+        return render_template("webpage.html", data=data, form=form)
     elif request.method == "POST":
         if form.validate():
-            # To fully implement the ability to write the data to a JSON
-            # file, I will have to build a JS frontend (I think--this is just a guess) 
             session["time"] = form.time.data
             session["data"] = form.data.data
             return redirect(url_for("index"))
@@ -97,3 +101,8 @@ def index():
             for field, error in form.errors.items():
                 flash(f"{field}: {error}")
                 return redirect(url_for("index"))
+                
+# # Imports for measuring and writing data
+# import data
+# from threading import Thread
+# Thread(target=data.lux).start()
