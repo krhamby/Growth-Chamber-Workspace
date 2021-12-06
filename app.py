@@ -3,7 +3,7 @@ from flask.helpers import flash
 from myforms import NameForm, EmailForm, DataChangeForm
 
 # TODO: Can remove this once SQL implemtation is complete
-from datapack import data_db
+# from datapack import data_db
 
 # Flask imports
 from flask import Flask
@@ -86,8 +86,16 @@ def get_all_data():
         'data': [data.to_json() for data in data_set]
     })
 
+@app.get("/api/v1/data/<int:day>/")
+def get_filtered_data(day):
+    time_filter = datetime.today() - timedelta(days = day)
+    data_set = Data.query.filter(Data.timestamp >= time_filter).all()
+    return jsonify({
+        "data": [data.to_json() for data in data_set]
+    })
+
 @app.route("/", methods=["GET", "POST"])
-def index():
+def index(): 
     data = Data.query.order_by(Data.timestamp.asc()).all()
     form = DataChangeForm()
     if request.method == "GET":
@@ -102,7 +110,9 @@ def index():
                 flash(f"{field}: {error}")
                 return redirect(url_for("index"))
                 
-# # Imports for measuring and writing data
-# import data
-# from threading import Thread
-# Thread(target=data.lux).start()
+# Imports for measuring and writing data
+import data
+from threading import Thread
+
+# Runs data.py concurrently; will use a separate terminal later
+Thread(target = data.lux).start()

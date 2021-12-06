@@ -13,7 +13,7 @@ from datetime import datetime
 import random
 
 def lux():
-	# while True:
+	while True:
 	# 	# Get I2C bus
 	# 	bus = smbus.SMBus(1)
 

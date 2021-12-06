@@ -2,7 +2,12 @@ window.addEventListener("DOMContentLoaded", function () {
   loadLuxData();
   loadTempData();
   loadHumidityData();
+
+  const luxFilter = document.getElementById("lux-input");
+  luxFilter.addEventListener()
 });
+
+
 
 function loadLuxData() {
   const dataIndexURL = "/api/v1/data/";
