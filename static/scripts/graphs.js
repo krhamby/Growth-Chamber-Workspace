@@ -3,25 +3,42 @@ window.addEventListener("DOMContentLoaded", function () {
   loadTempData();
   loadHumidityData();
 
-  const luxFilter = document.getElementById("lux-input");
-  luxFilter.addEventListener()
+  // I am unsure as to what this code does right now (02/26/22)
+  // const luxFilter = document.getElementById("lux-input");
+  // luxFilter.addEventListener()
+
+  const luxFilter = document.getElementById("luxFilter");
+  luxFilter.addEventListener("click", toggleLuxFilter);
 });
 
+function toggleLuxFilter(event) {
+  const oldChart = document.getElementById("luxChart");
+  oldChart.parentNode.removeChild(oldChart);
+  const newChart = document.createElement("canvas"); 
+  newChart.id = "luxChart";
+  document.getElementById("lux").appendChild(newChart);
+  console.log("test");
+  loadLuxData(0.1);
+}
 
-
-function loadLuxData() {
-  const dataIndexURL = "/api/v1/data/";
+async function loadLuxData(timeFilter) {
+  var dataIndexURL = "";
+  if (timeFilter === undefined) {
+    dataIndexURL = "/api/v1/data/"
+  } else {
+    dataIndexURL = "/api/v1/data/?hour=" + timeFilter; 
+  }
   fetch(dataIndexURL)
     .then(validateJSON)
     .then(data => {
-      const allData = [];
+      const filteredData = [];
       for (const dataset of data.data) {
         const date = new Date(dataset.timestamp);
         const lux = Number(dataset.lux);
         const json = {x: date, y: lux};
-        allData.push(json);
+        filteredData.push(json);
       }
-      return allData;
+      return filteredData;
     })
     .then(createLuxGraph)
     .catch(error => {
@@ -29,7 +46,7 @@ function loadLuxData() {
     })
 }
 
-function createLuxGraph(allData) {
+async function createLuxGraph(allData) {
   // Used for debugging
   console.log(allData);
 
@@ -65,12 +82,12 @@ function createLuxGraph(allData) {
   // console.log(label);
   // const canvasId = String(label.toLowerCase()) + "Chart";
   const luxChart = new Chart(
-    document.getElementById("luxChart"),
-    config
+  document.getElementById("luxChart"),
+  config
   );
 }
 
-function loadTempData() {
+async function loadTempData() {
   const dataIndexURL = "/api/v1/data/";
   fetch(dataIndexURL)
     .then(validateJSON)
@@ -129,7 +146,7 @@ function createTemperatureGraph(allData) {
   );
 }
 
-function loadHumidityData() {
+async function loadHumidityData() {
   const dataIndexURL = "/api/v1/data/";
   fetch(dataIndexURL)
     .then(validateJSON)

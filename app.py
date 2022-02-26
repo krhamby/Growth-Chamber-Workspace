@@ -83,13 +83,14 @@ db.create_all()
 def get_all_data():
     data_set = Data.query.all()  # TODO: may need to sort the data after this line
     return jsonify({
-        'data': [data.to_json() for data in data_set]
+        "data": [data.to_json() for data in data_set]
     })
 
-@app.get("/api/v1/data/<int:day>/")
-def get_filtered_data(day):
-    time_filter = datetime.today() - timedelta(days = day)
-    data_set = Data.query.filter(Data.timestamp >= time_filter).all()
+@app.get("/api/v1/data/<int:hour>/")
+def get_filtered_data(hour):
+    time_filter = datetime.now() - timedelta(hours = hour)
+    time_filter = time_filter.strftime("%y-%m-%d %H:%M:%S.%f")
+    data_set = Data.query.filter(Data.timestamp >= time_filter)
     return jsonify({
         "data": [data.to_json() for data in data_set]
     })
@@ -97,6 +98,7 @@ def get_filtered_data(day):
 @app.route("/", methods=["GET", "POST"])
 def index(): 
     data = Data.query.order_by(Data.timestamp.asc()).all()
+    # data = get_all_data()
     form = DataChangeForm()
     if request.method == "GET":
         return render_template("webpage.html", data=data, form=form)
