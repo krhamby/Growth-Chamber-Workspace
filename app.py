@@ -18,6 +18,11 @@ from flask_sqlalchemy import SQLAlchemy
 # Used to create dummy data
 from datetime import datetime, timedelta
 
+# imports for filtering
+from sqlalchemy import func
+import json
+import sys
+
 # Determine the absolute path of our database file
 scriptdir = os.path.abspath(os.path.dirname(__file__))
 dbpath = os.path.join(scriptdir, 'sensor_data.sqlite3')
@@ -38,7 +43,7 @@ db = SQLAlchemy(app)
 class Data(db.Model):
     __tablename__ = "Data"
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, nullable=False)
+    timestamp = db.Column(db.Text, nullable=False)
     lux = db.Column(db.Unicode, nullable=False)
     temperature = db.Column(db.Float, nullable=False)
     humidity = db.Column(db.Unicode, nullable=False)
@@ -50,12 +55,7 @@ class Data(db.Model):
         return f"Data({self.id})"
 
     def to_json(self):
-        return {
-            "timestamp": self.timestamp.isoformat(),
-            "lux": self.lux,
-            "temperature": self.temperature,
-            "humidity": self.humidity
-        }
+        return {"timestamp": self.timestamp, "lux": self.lux, "temperature": self.temperature, "humidity": self.humidity}
 
 # ONLY USE THIS IN DEVELOPMENT
 # db.drop_all()
@@ -81,19 +81,39 @@ db.create_all()
 # Route for database API containing all tuples
 @app.get("/api/v1/data/")
 def get_all_data():
-    data_set = Data.query.all()  # TODO: may need to sort the data after this line
-    return jsonify({
-        "data": [data.to_json() for data in data_set]
-    })
+    data_set = Data.query.all() 
+    print(":(\n")
+    return jsonify({"data": [data.to_json() for data in data_set]})
 
-@app.get("/api/v1/data/<int:hour>/")
+@app.get("/api/v1/data/<float:hour>/")
 def get_filtered_data(hour):
-    time_filter = datetime.now() - timedelta(hours = hour)
-    time_filter = time_filter.strftime("%y-%m-%d %H:%M:%S.%f")
-    data_set = Data.query.filter(Data.timestamp >= time_filter)
-    return jsonify({
-        "data": [data.to_json() for data in data_set]
-    })
+    time_filter = (datetime.now() - timedelta(hours = hour)).isoformat()
+    # time_filter = time_filter.isoformat()
+    # time_filter = time_filter.strftime("%y-%m-%d %H:%M:%S.%f")
+    # data_set = Data.query.filter(CData.timestamp >= time_filter)
+
+    # data_set = Data.query.all()
+    # json_data = jsonify({
+    #     "data": [data.to_json() for data in data_set]
+    # })
+    # data_dict = json.loads(json_data)
+    # print(data_dict)
+    # sys.stdout.flush()
+
+    # filtered_data_dict = [d for d in data_dict if d['timestamp'] >= time_filter]
+    # filtered_json_data = json.dumps(filtered_data_dict)
+    # print(filtered_json_data, file=sys.stdout)
+
+    # return filtered_json_data
+
+    # trying again
+    # filtered_data = Data.query.filter(func.DATE(Data.timestamp) <= datetime.now(), 
+    #     func.DATE(Data.timestamp) >= datetime(time_filter.year, time_filter.month, time_filter.day,
+    #     time_filter.hour, time_filter.minute, time_filter.second, time_filter.microsecond)).all()
+
+    # and again
+    filtered_data = Data.query.filter(Data.timestamp >= time_filter).all()
+    return jsonify({"data": [data.to_json() for data in filtered_data]})
 
 @app.route("/", methods=["GET", "POST"])
 def index(): 

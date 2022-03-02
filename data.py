@@ -63,7 +63,7 @@ def lux():
 	# 	print(ch0 - ch1)
 		ch0 = random.randint(80000, 85000)
 
-		newData = Data(timestamp=datetime.now(), lux=ch0, temperature=random.randint(
+		newData = Data(timestamp=datetime.now().isoformat(), lux=ch0, temperature=random.randint(
 			65, 75), humidity=random.randint(80, 85))
 		db.session.add(newData)
 		db.session.commit()

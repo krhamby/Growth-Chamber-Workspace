@@ -18,7 +18,7 @@ function toggleLuxFilter(event) {
   newChart.id = "luxChart";
   document.getElementById("lux").appendChild(newChart);
   console.log("test");
-  loadLuxData(0.1);
+  loadLuxData(0.01);
 }
 
 async function loadLuxData(timeFilter) {
@@ -26,7 +26,7 @@ async function loadLuxData(timeFilter) {
   if (timeFilter === undefined) {
     dataIndexURL = "/api/v1/data/"
   } else {
-    dataIndexURL = "/api/v1/data/?hour=" + timeFilter; 
+    dataIndexURL = "/api/v1/data/" + timeFilter; 
   }
   fetch(dataIndexURL)
     .then(validateJSON)
