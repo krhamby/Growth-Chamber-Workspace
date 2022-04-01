@@ -11,6 +11,11 @@ window.addEventListener("DOMContentLoaded", function () {
   luxFilter.addEventListener("click", toggleLuxFilter);
 });
 
+$("[data-toggle='toggle']").click(function() {
+  var selector = $(this).data("target");
+  $(selector).toggleClass('in');
+});
+
 function toggleLuxFilter(event) {
   const oldChart = document.getElementById("luxChart");
   oldChart.parentNode.removeChild(oldChart);

@@ -16,6 +16,29 @@ main {
     margin-right: 20%;
 }
 
+#demo {
+    width: 0px;
+}
+
+#demo.in {
+    width: 200px;
+}
+
+#demo {
+    -webkit-transition: width 2s ease;
+    -moz-transition: width 2s ease;
+    -o-transition: width 2s ease;
+    transition: width 2s ease;
+
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    background: yellow;
+    vertical-align: middle;
+    line-height: 30px;
+    height: 30px;
+}
+
 .col-lg-6 {
     border-radius: 10px;
     border: solid black thin;
@@ -35,6 +58,5 @@ main {
 .measurement {
     font-size: 30px;
 }
-/* .data {    
-} */
+
 
