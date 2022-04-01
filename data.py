@@ -5,12 +5,16 @@
 # https://www.controleverything.com/content/Light?sku=TSL2561_I2CS#tabs-0-product_tabset-2
 
 # import smbus
-import time
 import json
 
 from app import db, Data
 from datetime import datetime
 import random
+
+# imports for VEML7700
+import time
+import board
+import adafruit_veml7700
 
 def lux():
 	while True:
@@ -61,6 +65,21 @@ def lux():
 	# 	print(ch1)
 	# 	print("Visible Value in lux:")
 	# 	print(ch0 - ch1)
+
+		i2c = board.I2C()
+		veml7700 = adafruit_veml7700.VEML7700(i2c)
+
+		#configuration for high-light environments
+		veml7700.light_integration_time = veml7700.ALS_25MS
+		veml7700.light_gain = veml7700.ALS_GAIN_1_8
+
+		while True:
+			print("Lux:", veml7700.lux)
+			time.sleep(3)
+
+
+
+		# generate random data and store it in the database
 		ch0 = random.randint(80000, 85000)
 
 		newData = Data(timestamp=datetime.now().isoformat(), lux=ch0, temperature=random.randint(
