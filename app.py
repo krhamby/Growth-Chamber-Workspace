@@ -45,7 +45,7 @@ class Data(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.Text, nullable=False)
     lux = db.Column(db.Unicode, nullable=False)
-    temperature = db.Column(db.Float, nullable=False)
+    temperature = db.Column(db.Unicode, nullable=False)
     humidity = db.Column(db.Unicode, nullable=False)
 
     def __str__(self):
@@ -58,7 +58,7 @@ class Data(db.Model):
         return {"timestamp": self.timestamp, "lux": self.lux, "temperature": self.temperature, "humidity": self.humidity}
 
 # ONLY USE THIS IN DEVELOPMENT
-# db.drop_all()
+db.drop_all()
 
 # Only needed if the tables are not created
 db.create_all()
@@ -112,4 +112,4 @@ import data
 from threading import Thread
 
 # Runs data.py concurrently; will use a separate terminal later
-Thread(target = data.lux).start()
+Thread(target = data.main).start()
