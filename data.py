@@ -80,11 +80,11 @@ def lux():
 
 
 		# generate random data and store it in the database
-		ch0 = random.randint(80000, 85000)
+		# ch0 = random.randint(80000, 85000)
 
-		newData = Data(timestamp=datetime.now().isoformat(), lux=ch0, temperature=random.randint(
-			65, 75), humidity=random.randint(80, 85))
-		db.session.add(newData)
-		db.session.commit()
+		# newData = Data(timestamp=datetime.now().isoformat(), lux=ch0, temperature=random.randint(
+		# 	65, 75), humidity=random.randint(80, 85))
+		# db.session.add(newData)
+		# db.session.commit()
 
-		time.sleep(5)
+		# time.sleep(5)
