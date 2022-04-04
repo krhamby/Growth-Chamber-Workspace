@@ -29,15 +29,11 @@ def lux():
 def temp():
 	while True:
 		try:
-			sum = 0
-			for i in range(0, 5):
-				temperature_c = dhtDevice.temperature
-				temperature_f = temperature_c * (9 / 5) + 32
-				sum += temperature_f
-				time.sleep(1)
-
-			print(sum / 5)
-			return sum / 5
+			temperature_c = dhtDevice.temperature
+			if temperature_c is None:
+				continue
+			temperature_f = temperature_c * (9 / 5) + 32
+			return temperature_f
 			
 		except RuntimeError as error:
 			# Errors happen fairly often, DHT's are hard to read, just keep going
@@ -57,7 +53,6 @@ def humidity():
 				sum += humidity
 				time.sleep(1)
 
-			print(sum / 5)
 			return sum / 5
 			
 		except RuntimeError as error:
