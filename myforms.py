@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, IntegerField
 from wtforms.validators import InputRequired, Optional
 from wtforms.fields import PasswordField
-from wtforms.fields.html5 import EmailField, TimeField
+from wtforms.fields import EmailField, TimeField # issue with html5
 
 class NameForm(FlaskForm):
     name = StringField("Name: ", validators = [InputRequired()])
