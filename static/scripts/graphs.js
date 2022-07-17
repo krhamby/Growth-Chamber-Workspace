@@ -11,6 +11,7 @@ window.addEventListener("DOMContentLoaded", function () {
   luxFilter.addEventListener("click", toggleLuxFilter);
 });
 
+// Used to filter data by time (seems to cause errors)
 $("[data-toggle='toggle']").click(function() {
   var selector = $(this).data("target");
   $(selector).toggleClass('in');

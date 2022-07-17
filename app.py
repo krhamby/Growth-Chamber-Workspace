@@ -58,7 +58,7 @@ class Data(db.Model):
         return {"timestamp": self.timestamp, "lux": self.lux, "temperature": self.temperature, "humidity": self.humidity}
 
 # ONLY USE THIS IN DEVELOPMENT
-db.drop_all()
+# db.drop_all()
 
 # Only needed if the tables are not created
 db.create_all()

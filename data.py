@@ -21,7 +21,7 @@ veml7700.light_gain = veml7700.ALS_GAIN_1_8
 import adafruit_dht
 
 # DHT22 initialization
-dhtDevice = adafruit_dht.DHT22(board.D4)
+dhtDevice = adafruit_dht.DHT22(board.D17)
 
 def lux():
 	return veml7700.lux
