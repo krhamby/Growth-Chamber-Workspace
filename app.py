@@ -90,6 +90,22 @@ def get_filtered_data(hour):
     filtered_data = Data.query.filter(Data.timestamp >= time_filter).all()
     return jsonify({"data": [data.to_json() for data in filtered_data]})
 
+# Temporary imports for testing (move to top later)
+from gpiozero import LED
+light = LED(22)
+
+# Post request for changing the lights
+@app.post("/api/v1/functions/<string:func>/")
+def post_functions(func):
+    if func == "light":
+        if light.is_lit:
+            light.off()
+            print("Light off")
+        else:
+            light.on()
+            print("Light on")
+    return jsonify({"status": "success"})
+
 @app.route("/", methods=["GET", "POST"])
 def index(): 
     data = Data.query.order_by(Data.timestamp.asc()).all()
