@@ -104,6 +104,7 @@ def post_functions(func):
         else:
             light.on()
             print("Light on")
+    # Still needs error handling
     return jsonify({"status": "success"})
 
 @app.route("/", methods=["GET", "POST"])
