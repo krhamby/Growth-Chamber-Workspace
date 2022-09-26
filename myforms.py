@@ -14,8 +14,6 @@ class EmailForm(FlaskForm):
     confirm_password = PasswordField("Confirm Password: ")
 
 class DataChangeForm(FlaskForm):
-    time_data = IntegerField("Setting During Selected Time: ", validators = [InputRequired()])
-    other_data = IntegerField("Setting Outside Selected Time: ", validators = [InputRequired()])
-    stime = TimeField("Start Time: ", validators = [InputRequired()],  format = '%HH:%MM')
-    etime = TimeField("End Time: ", validators = [InputRequired()],  format = '%HH:%MM')
+    startTime = TimeField("Start Time: ", validators = [InputRequired()],  format = '%H:%M')
+    endTime = TimeField("End Time: ", validators = [InputRequired()],  format = '%H:%M')
     submit = SubmitField("Submit")

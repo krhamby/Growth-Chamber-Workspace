@@ -1,13 +1,13 @@
 import json
 
 # imports for database
-from app import db, Data
+from app import db, Data, Schedule
 from datetime import datetime
 
 # imports for VEML7700
 import time
 import board
-import adafruit_veml7700\
+import adafruit_veml7700
 
 # VEML7700 initialization
 i2c = board.I2C()
@@ -23,7 +23,27 @@ import adafruit_dht
 # DHT22 initialization
 dhtDevice = adafruit_dht.DHT22(board.D17)
 
+from app import light
+
+def lightControl():
+	schedule = Schedule.query.filter_by(id = "lux").first()
+	if schedule:
+		startTime = schedule.startTime
+		endTime = schedule.endTime
+		if startTime <= datetime.now().strftime("%H:%M") <= endTime:
+			light.on()
+			print("light on")
+		else:
+			light.off()
+			print("light off")
+
+
 def lux():
+	print("ALS: " + str(veml7700.light))
+	lux = veml7700.lux
+	adjusted_lux = (6.0135*10**-13)*(lux**4) - (9.3924*10**-9)*(lux**3) + (8.1488*10**-5)*(lux**2) + (1.0023)*(lux)
+	print("Lux: " + str(lux))
+	print("Adjusted Lux: " + str(adjusted_lux))
 	return veml7700.lux
 
 def temp():
@@ -67,7 +87,10 @@ def humidity():
 
 def main():
 	while True:
-		db.session.add(Data(timestamp = datetime.now(), lux = lux(), temperature = temp(), humidity = humidity()))
+		db.session.add(Data(timestamp = datetime.now().isoformat(), lux = lux(), temperature = temp(), humidity = humidity()))
 		db.session.commit()
-		time.sleep(300)
+
+		lightControl()
+
+		time.sleep(5)
 		

@@ -57,6 +57,13 @@ class Data(db.Model):
     def to_json(self):
         return {"timestamp": self.timestamp, "lux": self.lux, "temperature": self.temperature, "humidity": self.humidity}
 
+# Define model for Schedule table
+class Schedule(db.Model):
+    __tablename__ = "Schedule"
+    id = db.Column(db.Text, primary_key=True)
+    startTime = db.Column(db.Text, nullable=False)
+    endTime = db.Column(db.Text, nullable=False)
+
 # ONLY USE THIS IN DEVELOPMENT
 # db.drop_all()
 
@@ -87,7 +94,9 @@ def get_all_data():
 @app.get("/api/v1/data/<float:hour>/")
 def get_filtered_data(hour):
     time_filter = (datetime.now() - timedelta(hours = hour)).isoformat()
+    print(time_filter)
     filtered_data = Data.query.filter(Data.timestamp >= time_filter).all()
+    print(filtered_data)
     return jsonify({"data": [data.to_json() for data in filtered_data]})
 
 # Temporary imports for testing (move to top later)
@@ -115,8 +124,22 @@ def index():
         return render_template("webpage.html", data=data, form=form)
     elif request.method == "POST":
         if form.validate():
-            session["time"] = form.time.data
-            session["data"] = form.data.data
+            startTime = form.startTime.data.strftime("%H:%M")
+            endTime = form.endTime.data.strftime("%H:%M")
+
+            # Check if the schedule already exists
+            schedule = Schedule.query.filter_by(id="lux").first()
+            if schedule:
+                # Update the schedule
+                schedule.startTime = startTime
+                schedule.endTime = endTime
+            else:
+                # Create a new schedule
+                schedule = Schedule(id="lux", startTime=startTime, endTime=endTime)
+                db.session.add(schedule)
+            # schedule = Schedule(id = "lux", startTime = startTime, endTime = endTime)
+            # db.session.add(schedule)
+            db.session.commit()
             return redirect(url_for("index"))
         else:
             for field, error in form.errors.items():

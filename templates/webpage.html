@@ -83,21 +83,17 @@
           </p>
           <div class="collapse" id="collapseExample1">
             <div class="card card-body">
+            <form method="POST">
               {{form.hidden_tag()}}
 
-              {{form.stime.label}}
-              {{form.stime()}}
+              {{form.startTime.label}}
+              {{form.startTime()}}
               <br>
-              {{form.etime.label}}
-              {{form.etime()}}
-              <br>
-              {{form.time_data.label}}
-              {{form.time_data()}}
-              <br>
-              {{form.other_data.label}}
-              {{form.other_data()}}
+              {{form.endTime.label}}
+              {{form.endTime()}}
               <br>
               {{form.submit()}}
+            </form>
             </div>
           </div>
         </div>
@@ -119,7 +115,7 @@
               Change Temperature
             </button>
           </p>
-          <div class="collapse" id="collapseExample2">
+          {# <div class="collapse" id="collapseExample2">
             <div class="card card-body">
               {{form.hidden_tag()}}
 
@@ -137,7 +133,7 @@
               <br>
               {{form.submit()}}
             </div>
-          </div>
+          </div> #}
         </div>
       </div>
       <div class="row">
@@ -159,7 +155,7 @@
               Change Humidity
             </button>
           </p>
-          <div class="collapse" id="collapseExample3">
+          {# <div class="collapse" id="collapseExample3">
             <div class="card card-body">
               {{form.hidden_tag()}}
 
@@ -177,7 +173,7 @@
               <br>
               {{form.submit()}}
             </div>
-          </div>
+          </div> #}
         </div>
         <div class="col-lg-6 ms-auto">
           <h2 class="data">
@@ -189,7 +185,7 @@
               Change Other
             </button>
           </p>
-          <div class="collapse" id="collapseExample4">
+          {# <div class="collapse" id="collapseExample4">
             <div class="card card-body">
               {{form.hidden_tag()}}
 
@@ -207,7 +203,7 @@
               <br>
               {{form.submit()}}
             </div>
-          </div>
+          </div> #}
         </div>
       </div>
     </div>
