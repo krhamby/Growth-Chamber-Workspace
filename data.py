@@ -1,7 +1,7 @@
 import json
 
 # imports for database
-from app import db, Data, Schedule
+from app import db, Data, Schedule, Interval
 from datetime import datetime
 
 # imports for VEML7700
@@ -23,20 +23,31 @@ import adafruit_dht
 # DHT22 initialization
 dhtDevice = adafruit_dht.DHT22(board.D17)
 
-from app import light
+from app import light, pump
 
 def lightControl():
 	schedule = Schedule.query.filter_by(id = "lux").first()
 	if schedule:
 		startTime = schedule.startTime
 		endTime = schedule.endTime
-		if startTime <= datetime.now().strftime("%H:%M") <= endTime:
+		if startTime <= datetime.now().strftime("%H:%M") < endTime:
 			light.on()
 			print("light on")
 		else:
 			light.off()
 			print("light off")
 
+# Currently does not check for new intervals
+def waterControl():
+	interval = Interval.query.filter_by(id = "water").first()
+	while not interval:
+		interval = Interval.query.filter_by(id = "water").first()
+	if interval:
+		while True:
+			pump.on()
+			time.sleep(interval.minutes * 60)
+			pump.off()
+			time.sleep(interval * 60)
 
 def lux():
 	print("ALS: " + str(veml7700.light))
@@ -86,6 +97,7 @@ def humidity():
 	
 
 def main():
+	waterControl()
 	while True:
 		db.session.add(Data(timestamp = datetime.now().isoformat(), lux = lux(), temperature = temp(), humidity = humidity()))
 		db.session.commit()

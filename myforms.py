@@ -17,3 +17,8 @@ class DataChangeForm(FlaskForm):
     startTime = TimeField("Start Time: ", validators = [InputRequired()],  format = '%H:%M')
     endTime = TimeField("End Time: ", validators = [InputRequired()],  format = '%H:%M')
     submit = SubmitField("Submit")
+
+class WaterForm(FlaskForm):
+    minutes = IntegerField("Minutes: ", validators = [InputRequired()])
+    interval = IntegerField("Interval (min): ", validators = [InputRequired()])
+    submit = SubmitField("Submit")

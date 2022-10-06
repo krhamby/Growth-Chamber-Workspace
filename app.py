@@ -1,6 +1,6 @@
 # TODO: These will be used later to create a password for the webpage
 from flask.helpers import flash
-from myforms import NameForm, EmailForm, DataChangeForm
+from myforms import NameForm, EmailForm, DataChangeForm, WaterForm
 
 # TODO: Can remove this once SQL implemtation is complete
 # from datapack import data_db
@@ -64,6 +64,13 @@ class Schedule(db.Model):
     startTime = db.Column(db.Text, nullable=False)
     endTime = db.Column(db.Text, nullable=False)
 
+# Define model for Interval table
+class Interval(db.Model):
+    __tablename__ = "Interval"
+    id = db.Column(db.Text, primary_key=True)
+    duration = db.Column(db.Text, nullable=False)
+    interval = db.Column(db.Integer, nullable=False)
+
 # ONLY USE THIS IN DEVELOPMENT
 # db.drop_all()
 
@@ -103,6 +110,9 @@ def get_filtered_data(hour):
 from gpiozero import LED
 light = LED(22)
 
+from gpiozero import OutputDevice
+pump = OutputDevice(27)
+
 # Post request for changing the lights
 @app.post("/api/v1/functions/<string:func>/")
 def post_functions(func):
@@ -120,10 +130,25 @@ def index():
     data = Data.query.order_by(Data.timestamp.asc()).all()
     # data = get_all_data()
     form = DataChangeForm()
+    waterForm = WaterForm()
     if request.method == "GET":
-        return render_template("webpage.html", data=data, form=form)
+        return render_template("webpage.html", data=data, form=form, waterForm=waterForm)
     elif request.method == "POST":
-        if form.validate():
+        if waterForm.validate():
+            # Check if interval exists
+            interval = Interval.query.filter_by(id="water").first()
+            if interval:
+                # Update interval
+                interval.interval = waterForm.interval.data
+                interval.duration = waterForm.minutes.data
+            else:
+                # Create new interval
+                interval = Interval(id="water", interval=waterForm.interval.data, duration=waterForm.minutes.data)
+                db.session.add(interval)
+            db.session.commit()
+            print(f"Watering for {waterForm.minutes.data} minutes every {waterForm.interval.data} hours")
+            return redirect(url_for("index"))
+        elif form.validate():
             startTime = form.startTime.data.strftime("%H:%M")
             endTime = form.endTime.data.strftime("%H:%M")
 
