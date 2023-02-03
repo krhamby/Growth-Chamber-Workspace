@@ -39,6 +39,10 @@ main {
     height: 30px;
 }
 
+/* #selva {
+    
+} */
+
 .col-lg-6 {
     border-radius: 10px;
     border: solid black thin;
@@ -58,5 +62,7 @@ main {
 .measurement {
     font-size: 30px;
 }
+
+
 
 

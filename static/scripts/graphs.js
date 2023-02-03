@@ -1,21 +1,69 @@
-window.addEventListener("DOMContentLoaded", function () {
-  loadLuxData();
-  loadTempData();
-  loadHumidityData();
+let isCacheSupported = 'caches' in window;
 
-  // I am unsure as to what this code does right now (02/26/22)
-  // const luxFilter = document.getElementById("lux-input");
-  // luxFilter.addEventListener()
+window.addEventListener("DOMContentLoaded", function () {
+  createGraphs();
+  cacheData();
 
   const luxFilter = document.getElementById("luxFilter");
   luxFilter.addEventListener("click", toggleLuxFilter);
 });
 
-// Used to filter data by time (seems to cause errors)
-$("[data-toggle='toggle']").click(function() {
-  var selector = $(this).data("target");
-  $(selector).toggleClass('in');
-});
+async function cacheData() {
+  if (isCacheSupported) {
+    caches.open("data").then(cache => {
+      cache.add("/api/v1/data/").then(cache => {
+        console.log("Cached data");
+      });   
+    });
+  }
+}
+
+async function createGraphs() {
+  const dataIndexURL = "/api/v1/data/";
+  fetch(dataIndexURL)
+    .then(validateJSON)
+    .then(data => {
+      extractLuxData(data);
+      extractTempData(data);
+      extractHumidityData(data);
+    })
+    .catch(error => {
+      console.log("Data Fetch and Graph Creation Failed: ", error)
+    });
+}
+
+function extractLuxData(data) {
+  const allData = [];
+  for (const dataset of data.data) {
+    const date = new Date(dataset.timestamp);
+    const lux = Number(dataset.lux);
+    const json = {x: date, y: lux};
+    allData.push(json);
+  }
+  createLuxGraph(allData);
+}
+
+function extractTempData(data) {
+  const allData = [];
+  for (const dataset of data.data) {
+    const date = new Date(dataset.timestamp);
+    const temp = Number(dataset.temperature);
+    const json = {x: date, y: temp};
+    allData.push(json);
+  }
+  createTemperatureGraph(allData);
+}
+
+function extractHumidityData(data) {
+  const allData = [];
+  for (const dataset of data.data) {
+    const date = new Date(dataset.timestamp);
+    const humidity = Number(dataset.humidity);
+    const json = {x: date, y: humidity};
+    allData.push(json);
+  }
+  createHumidityGraph(allData);
+}
 
 function toggleLuxFilter(event) {
   const oldChart = document.getElementById("luxChart");
@@ -23,39 +71,28 @@ function toggleLuxFilter(event) {
   const newChart = document.createElement("canvas"); 
   newChart.id = "luxChart";
   document.getElementById("lux").appendChild(newChart);
-  console.log("test");
-  loadLuxData(0.01);
+
+  caches.open("data").then(cache => {
+    cache.match("/api/v1/data/").then(response => {
+      response.json().then(data => {
+        const filteredData = [];
+        for (const dataset of data.data) {
+          const date = new Date(dataset.timestamp);
+          const lux = Number(dataset.lux);
+          const filter = new Date() - 1000 * 60 * 10; // NOTE: temporary filter for 10 minutes
+          if ((date - 0) >= filter) {
+            const json = {x: date, y: lux};
+            filteredData.push(json);
+          }
+        }
+        createLuxGraph(filteredData);
+      });
+    });
+  });
 }
 
-async function loadLuxData(timeFilter) {
-  var dataIndexURL = "";
-  if (timeFilter === undefined) {
-    dataIndexURL = "/api/v1/data/"
-  } else {
-    dataIndexURL = "/api/v1/data/" + timeFilter; 
-  }
-  fetch(dataIndexURL)
-    .then(validateJSON)
-    .then(data => {
-      const filteredData = [];
-      for (const dataset of data.data) {
-        const date = new Date(dataset.timestamp);
-        const lux = Number(dataset.lux);
-        const json = {x: date, y: lux};
-        filteredData.push(json);
-      }
-      return filteredData;
-    })
-    .then(createLuxGraph)
-    .catch(error => {
-      console.log("Data Fetch Failed: ", error)
-    })
-}
 
 async function createLuxGraph(allData) {
-  // Used for debugging
-  console.log(allData);
-
   const config = {
     type: 'line',
     data: {
@@ -93,30 +130,7 @@ async function createLuxGraph(allData) {
   );
 }
 
-async function loadTempData() {
-  const dataIndexURL = "/api/v1/data/";
-  fetch(dataIndexURL)
-    .then(validateJSON)
-    .then(data => {
-      const allData = [];
-      for (const dataset of data.data) {
-        const date = new Date(dataset.timestamp);
-        const temp = Number(dataset.temperature);
-        const json = {x: date, y: temp};
-        allData.push(json);
-      }
-      return allData;
-    })
-    .then(createTemperatureGraph)
-    .catch(error => {
-      console.log("Data Fetch Failed: ", error)
-    })
-}
-
 function createTemperatureGraph(allData) {
-  // Used for debugging
-  console.log(allData);
-
   const config = {
     type: 'line',
     data: {
@@ -152,34 +166,10 @@ function createTemperatureGraph(allData) {
   );
 }
 
-async function loadHumidityData() {
-  const dataIndexURL = "/api/v1/data/";
-  fetch(dataIndexURL)
-    .then(validateJSON)
-    .then(data => {
-      const allData = [];
-      for (const dataset of data.data) {
-        const date = new Date(dataset.timestamp);
-        const humidity = Number(dataset.humidity);
-        const json = {x: date, y: humidity};
-        allData.push(json);
-      }
-      return allData;
-    })
-    .then(createHumidityGraph)
-    .catch(error => {
-      console.log("Data Fetch Failed: ", error)
-    })
-}
-
 function createHumidityGraph(allData) {
-  // Used for debugging
-  console.log(allData);
-
   const config = {
     type: 'line',
     data: {
-      labels: [],
       datasets: [{
         data: allData,
         label: "Humidity (%)",

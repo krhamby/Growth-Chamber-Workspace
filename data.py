@@ -2,7 +2,7 @@ import json
 
 # imports for database
 from app import db, Data, Schedule, Interval
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # imports for VEML7700
 import time
@@ -40,21 +40,33 @@ def lightControl():
 # Currently does not check for new intervals
 def waterControl():
 	interval = Interval.query.filter_by(id = "water").first()
-	while not interval:
-		interval = Interval.query.filter_by(id = "water").first()
-	if interval:
-		while True:
-			pump.on()
-			time.sleep(interval.minutes * 60)
-			pump.off()
-			time.sleep(interval * 60)
+	now = datetime.now().strftime("%H:%M")
+	otherNow = datetime.now()
+	if interval and (now <= "16:00" and now >= "15:45"):
+		isWatering = True
+		while isWatering:
+			if otherNow <= otherNow + timedelta(seconds=30):
+				pump.on()
+			else:
+				pump.off()
+				isWatering = False
+	else:
+		pump.off()
+	# while not interval:
+	# 	interval = Interval.query.filter_by(id = "water").first()
+	# if interval:
+	# 	while True:
+	# 		pump.on()
+	# 		time.sleep(int(interval.duration) * 60)
+	# 		pump.off()
+	# 		time.sleep(interval.interval * 60)
 
 def lux():
-	print("ALS: " + str(veml7700.light))
+	# print("ALS: " + str(veml7700.light))
 	lux = veml7700.lux
 	adjusted_lux = (6.0135*10**-13)*(lux**4) - (9.3924*10**-9)*(lux**3) + (8.1488*10**-5)*(lux**2) + (1.0023)*(lux)
-	print("Lux: " + str(lux))
-	print("Adjusted Lux: " + str(adjusted_lux))
+	# print("Lux: " + str(lux))
+	# print("Adjusted Lux: " + str(adjusted_lux))
 	return veml7700.lux
 
 def temp():
@@ -97,12 +109,16 @@ def humidity():
 	
 
 def main():
-	waterControl()
+    # not needed for demo day
+	
 	while True:
 		db.session.add(Data(timestamp = datetime.now().isoformat(), lux = lux(), temperature = temp(), humidity = humidity()))
 		db.session.commit()
 
+		# not needed for demo day
 		lightControl()
+  
+		# waterControl()
 
-		time.sleep(5)
+		time.sleep(300)
 		

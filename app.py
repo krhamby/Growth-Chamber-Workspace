@@ -123,6 +123,13 @@ def post_functions(func):
         else:
             light.on()
             print("Light on")
+    elif func == "water":
+        if pump.is_active:
+            pump.off()
+            print("Water off")
+        else:
+            pump.on()
+            print("Water on")
     return jsonify({"status": "success"})
 
 @app.route("/", methods=["GET", "POST"])
